@@ -1,0 +1,4 @@
+node_modules
+results/*
+!results/eventId_currentTime.html
+package-lock.json

@@ -1,0 +1,37 @@
+body {
+  font-family: "Segoe UI", Meiryo, sans-serif;
+  background-color: #f9f9f9;
+  color: #333333;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  margin: 0;
+}
+
+main {
+  width: 100%;
+  max-width: 70ch;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  color: #007bff;
+}
+
+ol {
+  padding-left: 60px;
+  margin-bottom: 2rem;
+}
+
+li {
+  font-size: 2rem;
+}
+
+a {
+  display: block;
+  color: #007bff;
+}

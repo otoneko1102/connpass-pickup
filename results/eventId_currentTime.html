@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Connpass Roulette Result</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Meiryo, sans-serif;
+        background-color: #f9f9f9;
+        color: #333333;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+        margin: 0;
+      }
+
+      main {
+        width: 100%;
+        max-width: 70ch;
+        padding: 30px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: #007bff;
+      }
+
+      ol {
+        padding-left: 60px;
+        margin-bottom: 2rem;
+      }
+
+      li {
+        font-size: 2rem;
+      }
+
+      a {
+        display: block;
+        color: #007bff;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>順番</h1>
+      <p><a href="https://connpass.com/event/eventId">Event URL</a></p>
+      <ol>
+        <li>Member 1</li>
+        <li>Member 2</li>
+        <li>Member 3</li>
+        <li>Member 4</li>
+        <li>Member 5</li>
+      </ol>
+    </main>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const links = document.querySelectorAll("a");
+        links.forEach((link) => {
+          link.setAttribute("target", "_blank");
+        });
+      });
+    </script>
+  </body>
+</html>

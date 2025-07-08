@@ -1,0 +1,23 @@
+{
+  "name": "connpass-pickup",
+  "version": "1.0.0",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "pickup": "node main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.10.0",
+    "cheerio": "^1.1.0",
+    "inquirer": "^12.7.0",
+    "markdown-it": "^14.1.0",
+    "oh-my-logo": "^0.1.0",
+    "open": "^10.1.2",
+    "prettier": "^3.6.2"
+  }
+}
