@@ -70,7 +70,7 @@ async function main() {
           type: "checkbox",
           name: "selectedRoles",
           message:
-            "対象の参加枠を選択してください(Spaceで選択/選択なしで全選択/Enterで確定)",
+            "対象の参加枠を選択してください",
           choices: availableRoles,
         },
         {
@@ -82,9 +82,6 @@ async function main() {
       ]);
 
       let rolesToProcess = followUpAnswers.selectedRoles;
-      if (rolesToProcess.length === 0) {
-        rolesToProcess = availableRoles;
-      }
 
       for (const role of rolesToProcess) {
         members.push(...participants[role]);
