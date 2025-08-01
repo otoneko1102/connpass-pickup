@@ -77,7 +77,7 @@ async function main() {
       eventId = answers.event;
     }
     const match = eventId.match(/https?:\/\/.*?connpass\.com\/event\/(\d+)/);
-    eventId = match ? match[1] : "nomatch";
+    eventId = match ? match[1] : eventId;
     const target = TARGET_URL.replace("[id]", eventId);
     console.log(`\neventId: ${eventId}`);
     console.log(`取得中: ${target}`);
@@ -87,6 +87,22 @@ async function main() {
     const $ = cheerio.load(data);
     const participants = {};
 
+    const adminTable = $(".concerned_area .participants_table");
+    if (adminTable.length) {
+      const adminNames = [];
+      adminTable.find("tbody .user .display_name a").each((j, user) => {
+        const userElement = $(user);
+        const name = userElement.text().trim();
+        const href = userElement.attr("href");
+        const match = href ? href.match(/user\/([^\/]+)/) : null;
+        const username = match ? match[1] : "";
+        adminNames.push(`${name} (${username})`);
+      });
+      if (adminNames.length > 0) {
+        participants["☆管理者"] = adminNames;
+      }
+    }
+
     $(".participation_table_area").each((i, section) => {
       const roleNameElement = $(section).find("thead .label_ptype_name");
       if (roleNameElement.length) {
@@ -95,7 +111,11 @@ async function main() {
         $(section)
           .find("tbody .user .display_name a")
           .each((j, user) => {
-            names.push($(user).text().trim());
+            const userElement = $(user);
+            const name = userElement.text().trim();
+            const href = userElement.attr("href");
+            const username = href ? href.split("/").filter(Boolean).pop() : "";
+            names.push(`${name} (${username})`);
           });
         if (names.length > 0) {
           participants[roleName] = names;
@@ -126,10 +146,17 @@ async function main() {
       ]);
 
       let rolesToProcess = followUpAnswers.selectedRoles;
+      const memberSet = new Set();
 
       for (const role of rolesToProcess) {
-        members.push(...participants[role]);
+        if (participants[role]) {
+          for (const member of participants[role]) {
+            memberSet.add(member);
+          }
+        }
       }
+
+      members = [...memberSet];
 
       if (followUpAnswers.additionalMembers) {
         const additional = followUpAnswers.additionalMembers
