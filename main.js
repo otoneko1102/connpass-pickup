@@ -142,7 +142,7 @@ async function main() {
       }
     );
 
-    const outputDir = path.resolve("./results");
+    const outputDir = path.join(__dirname, "results");
     const tempFilePath = path.join(outputDir, `${eventId}_${Date.now()}.html`);
     await fs.mkdir(outputDir, { recursive: true });
     await fs.writeFile(tempFilePath, editedHtml, "utf-8");
