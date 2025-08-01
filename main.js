@@ -193,11 +193,11 @@ async function main() {
         members.push(...additional);
       }
     } else {
-      console.log("\n参加枠が見つかりませんでした");
+      console.log("\n参加者が見つかりませんでした");
     }
 
     if (members.length === 0) {
-      console.log("\n発表者がいないので処理を終了します");
+      console.log("\n参加者がいないので処理を終了します");
       return;
     }
 
