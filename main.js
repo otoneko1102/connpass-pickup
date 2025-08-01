@@ -22,7 +22,7 @@ async function checkVersion() {
     const currentVersion = pkg.version;
     const packageName = pkg.name;
 
-    console.log(`\n${packageName}@${currentVersion}\n`);
+    console.log(`${packageName}@${currentVersion}\n`);
 
     const res = await axios.get(`https://registry.npmjs.org/${packageName}`);
     const latestVersion = res.data["dist-tags"].latest;
@@ -30,7 +30,7 @@ async function checkVersion() {
     if (semver.gt(latestVersion, currentVersion)) {
       console.log(
         chalk.yellow(
-          `\n[Notice] 新しいバージョンが利用可能です！: ${chalk.gray(currentVersion)} --> ${chalk.green(latestVersion)}`
+          `[Notice] 新しいバージョンが利用可能です！: ${chalk.gray(currentVersion)} --> ${chalk.green(latestVersion)}`
         )
       );
       console.log(

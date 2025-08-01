@@ -1,6 +1,6 @@
 {
   "name": "connpass-pickup",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "https://connpass.com/ のイベントの参加枠のメンバーをランダムに並び替えるツールです。",
   "main": "main.js",
   "type": "module",
