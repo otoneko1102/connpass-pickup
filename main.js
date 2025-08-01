@@ -1,5 +1,8 @@
+#!/usr/bin/env node
+
 import fs from "fs/promises";
 import path from "path";
+import { fileURLToPath } from "url";
 import { render } from "oh-my-logo";
 import axios from "axios";
 import * as cheerio from "cheerio";
@@ -19,20 +22,29 @@ async function main() {
 
     console.log(logo, "\n");
 
-    const answers = await inquirer.prompt([
-      {
-        type: "input",
-        name: "event",
-        message: "connpassのeventURLまたはeventIdを入力してください:",
-        validate: (input) =>
-          input
-            ? true
-            : "この項目は必須です(eventId: https://connpass.com/event/[id]/ の[id]の部分)",
-      },
-    ]);
+    let eventId;
 
-    const match = answers.event.match(/https?:\/\/.*?connpass\.com\/event\/(\d+)/);
-    const eventId = match ? match[1] : answers.event;
+    const argEventId = process.argv[2];
+    if (argEventId) {
+      eventId = argEventId;
+    } else {
+      const answers = await inquirer.prompt([
+        {
+          type: "input",
+          name: "event",
+          message: "connpassのeventURLまたはeventIdを入力してください:",
+          validate: (input) =>
+            input
+              ? true
+              : "この項目は必須です(eventId: https://connpass.com/event/[id]/ の[id]の部分)",
+        },
+      ]);
+      eventId = answers.event;
+    }
+    const match = eventId.match(
+      /https?:\/\/.*?connpass\.com\/event\/(\d+)/
+    );
+    eventId = match ? match[1] : "nomatch";
     const target = TARGET_URL.replace("[id]", eventId);
     console.log(`\neventId: ${eventId}`);
     console.log(`取得中: ${target}`);
@@ -69,8 +81,7 @@ async function main() {
         {
           type: "checkbox",
           name: "selectedRoles",
-          message:
-            "対象の参加枠を選択してください",
+          message: "対象の参加枠を選択してください",
           choices: availableRoles,
         },
         {
@@ -117,9 +128,10 @@ async function main() {
 
     const md = new MarkdownIt();
     const htmlFragment = md.render(markdown);
-    const stylePath = path.join("./assets", "style.css");
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+    const stylePath = path.join(__dirname, "assets", "style.css");
     const style = await fs.readFile(stylePath, "utf-8");
-    const htmlPath = path.join("./assets", "index.html");
+    const htmlPath = path.join(__dirname, "assets", "index.html");
     const html = await fs.readFile(htmlPath, "utf-8");
     const editedHtml = await prettier.format(
       html
@@ -131,10 +143,7 @@ async function main() {
     );
 
     const outputDir = path.resolve("./results");
-    const tempFilePath = path.join(
-      outputDir,
-      `${eventId}_${Date.now()}.html`
-    );
+    const tempFilePath = path.join(outputDir, `${eventId}_${Date.now()}.html`);
     await fs.mkdir(outputDir, { recursive: true });
     await fs.writeFile(tempFilePath, editedHtml, "utf-8");
     await open(tempFilePath);
