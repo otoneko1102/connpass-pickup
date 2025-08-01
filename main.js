@@ -5,13 +5,46 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { render } from "oh-my-logo";
 import axios from "axios";
+import * as semver from "semver";
+import chalk from "chalk";
 import * as cheerio from "cheerio";
 import inquirer from "inquirer";
 import MarkdownIt from "markdown-it";
 import prettier from "prettier";
 import open from "open";
 
+import pkg from "./package.json" with { type: "json" };
+
 const TARGET_URL = "https://connpass.com/event/[id]/participation/";
+
+async function checkVersion() {
+  try {
+    const currentVersion = pkg.version;
+    const packageName = pkg.name;
+
+    console.log(`\n${packageName}@${currentVersion}\n`);
+
+    const res = await axios.get(`https://registry.npmjs.org/${packageName}`);
+    const latestVersion = res.data["dist-tags"].latest;
+
+    if (semver.gt(latestVersion, currentVersion)) {
+      console.log(
+        chalk.yellow(
+          `\n[Notice] 新しいバージョンが利用可能です！: ${chalk.gray(currentVersion)} --> ${chalk.green(latestVersion)}`
+        )
+      );
+      console.log(
+        chalk.yellow(
+          `アップデート: ${chalk.cyan(
+            `npm install -g ${packageName}@latest`
+          )}\n`
+        )
+      );
+    }
+  } catch (e) {
+    console.error("バージョンチェックに失敗しました:", e.message);
+  }
+}
 
 async function main() {
   try {
@@ -21,6 +54,8 @@ async function main() {
     });
 
     console.log(logo, "\n");
+
+    await checkVersion();
 
     let eventId;
 
@@ -41,9 +76,7 @@ async function main() {
       ]);
       eventId = answers.event;
     }
-    const match = eventId.match(
-      /https?:\/\/.*?connpass\.com\/event\/(\d+)/
-    );
+    const match = eventId.match(/https?:\/\/.*?connpass\.com\/event\/(\d+)/);
     eventId = match ? match[1] : "nomatch";
     const target = TARGET_URL.replace("[id]", eventId);
     console.log(`\neventId: ${eventId}`);

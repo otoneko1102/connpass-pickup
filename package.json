@@ -1,6 +1,6 @@
 {
   "name": "connpass-pickup",
-  "version": "3.0.2",
+  "version": "3.1.1",
   "description": "https://connpass.com/ のイベントの参加枠のメンバーをランダムに並び替えるツールです。",
   "main": "main.js",
   "type": "module",
@@ -17,12 +17,14 @@
   },
   "dependencies": {
     "axios": "^1.10.0",
+    "chalk": "^5.4.1",
     "cheerio": "^1.1.0",
     "inquirer": "^12.7.0",
     "markdown-it": "^14.1.0",
     "oh-my-logo": "^0.1.0",
     "open": "^10.1.2",
-    "prettier": "^3.6.2"
+    "prettier": "^3.6.2",
+    "semver": "^7.7.2"
   },
   "keywords": [
     "connpass",
