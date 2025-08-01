@@ -17,6 +17,16 @@ npm -v # 10.9.2
 npm install -g connpass-pickup@latest
 pickup
 ```
+このような使い方も可能です:
+```bash
+pickup 000000
+```
+```bash
+pickup https://connpass.com/event/000000/
+```
+```bash
+pickup https://example.connpass.com/event/000000/
+```
 
 #### Git Install (legacy)
 ```bash
@@ -24,6 +34,16 @@ git clone https://github.com/otoneko1102/connpass-pickup.git
 cd connpass-pickup
 npm install
 npm run pickup
+```
+このような使い方も可能です:
+```bash
+npm run pickup 000000
+```
+```bash
+npm run pickup https://connpass.com/event/000000/
+```
+```bash
+npm run pickup https://example.connpass.com/event/000000/
 ```
 
 ### Sample

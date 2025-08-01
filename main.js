@@ -30,7 +30,9 @@ async function checkVersion() {
     if (semver.gt(latestVersion, currentVersion)) {
       console.log(
         chalk.yellow(
-          `[Notice] 新しいバージョンが利用可能です！: ${chalk.gray(currentVersion)} --> ${chalk.green(latestVersion)}`
+          `[Notice] 新しいバージョンが利用可能です！: ${chalk.gray(
+            currentVersion
+          )} --> ${chalk.green(latestVersion)}`
         )
       );
       console.log(
@@ -76,8 +78,10 @@ async function main() {
       ]);
       eventId = answers.event;
     }
-    const match = eventId.match(/https?:\/\/.*?connpass\.com\/event\/(\d+)/);
-    eventId = match ? match[1] : eventId;
+    const matchEventId = eventId.match(
+      /https?:\/\/.*?connpass\.com\/event\/(\d+)/
+    );
+    eventId = matchEventId ? matchEventId[1] : eventId;
     const target = TARGET_URL.replace("[id]", eventId);
     console.log(`\neventId: ${eventId}`);
     console.log(`取得中: ${target}`);
@@ -114,7 +118,8 @@ async function main() {
             const userElement = $(user);
             const name = userElement.text().trim();
             const href = userElement.attr("href");
-            const username = href ? href.split("/").filter(Boolean).pop() : "";
+            const match = href ? href.match(/user\/([^\/]+)/) : null;
+            const username = match ? match[1] : "";
             names.push(`${name} (${username})`);
           });
         if (names.length > 0) {
@@ -128,14 +133,29 @@ async function main() {
 
     let members = [];
     const availableRoles = Object.keys(participants);
+    let followUpAnswers;
 
     if (availableRoles.length > 0) {
-      const followUpAnswers = await inquirer.prompt([
+      followUpAnswers = await inquirer.prompt([
         {
           type: "checkbox",
           name: "selectedRoles",
-          message: "対象の参加枠を選択してください",
+          message: "対象の参加枠を選択してください:",
           choices: availableRoles,
+        },
+        {
+          type: "list",
+          name: "allowDuplicates",
+          message: "抽選リストの重複を削除しますか？(同じ人が複数枠にいる場合)",
+          choices: ["はい", "いいえ"],
+          default: "はい",
+        },
+        {
+          type: "list",
+          name: "saveHtml",
+          message: "結果をHTMLファイルで保存・表示しますか？",
+          choices: ["はい", "いいえ"],
+          default: "はい",
         },
         {
           type: "input",
@@ -145,18 +165,25 @@ async function main() {
         },
       ]);
 
-      let rolesToProcess = followUpAnswers.selectedRoles;
-      const memberSet = new Set();
+      const rolesToProcess = followUpAnswers.selectedRoles;
 
-      for (const role of rolesToProcess) {
-        if (participants[role]) {
-          for (const member of participants[role]) {
-            memberSet.add(member);
+      if (followUpAnswers.allowDuplicates === "はい") {
+        const memberSet = new Set();
+        for (const role of rolesToProcess) {
+          if (participants[role]) {
+            for (const member of participants[role]) {
+              memberSet.add(member);
+            }
+          }
+        }
+        members = [...memberSet];
+      } else {
+        for (const role of rolesToProcess) {
+          if (participants[role]) {
+            members.push(...participants[role]);
           }
         }
       }
-
-      members = [...memberSet];
 
       if (followUpAnswers.additionalMembers) {
         const additional = followUpAnswers.additionalMembers
@@ -186,29 +213,34 @@ async function main() {
       markdown += `\n${index + 1}. ${member}`;
     });
 
-    const md = new MarkdownIt();
-    const htmlFragment = md.render(markdown);
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
-    const stylePath = path.join(__dirname, "assets", "style.css");
-    const style = await fs.readFile(stylePath, "utf-8");
-    const htmlPath = path.join(__dirname, "assets", "index.html");
-    const html = await fs.readFile(htmlPath, "utf-8");
-    const editedHtml = await prettier.format(
-      html
-        .replace("<style></style>", `<style>${style}</style>`)
-        .replace("<main></main>", `<main>${htmlFragment}</main>`),
-      {
-        parser: "html",
-      }
-    );
+    if (followUpAnswers && followUpAnswers.saveHtml === "はい") {
+      const md = new MarkdownIt();
+      const htmlFragment = md.render(markdown);
+      const __dirname = path.dirname(fileURLToPath(import.meta.url));
+      const stylePath = path.join(__dirname, "assets", "style.css");
+      const style = await fs.readFile(stylePath, "utf-8");
+      const htmlPath = path.join(__dirname, "assets", "index.html");
+      const html = await fs.readFile(htmlPath, "utf-8");
+      const editedHtml = await prettier.format(
+        html
+          .replace("<style></style>", `<style>${style}</style>`)
+          .replace("<main></main>", `<main>${htmlFragment}</main>`),
+        {
+          parser: "html",
+        }
+      );
 
-    const outputDir = path.join(__dirname, "results");
-    const tempFilePath = path.join(outputDir, `${eventId}_${Date.now()}.html`);
-    await fs.mkdir(outputDir, { recursive: true });
-    await fs.writeFile(tempFilePath, editedHtml, "utf-8");
-    await open(tempFilePath);
+      const outputDir = path.join(__dirname, "results");
+      const tempFilePath = path.join(
+        outputDir,
+        `${eventId}_${Date.now()}.html`
+      );
+      await fs.mkdir(outputDir, { recursive: true });
+      await fs.writeFile(tempFilePath, editedHtml, "utf-8");
+      await open(tempFilePath);
 
-    console.log(`\nブラウザで結果を表示します: ${tempFilePath}`);
+      console.log(`\nブラウザで結果を表示します: ${tempFilePath}`);
+    }
   } catch (e) {
     if (e.isTtyError) {
       console.log("\n処理がキャンセルされました");
