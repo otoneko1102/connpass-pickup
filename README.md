@@ -48,3 +48,8 @@ npm run pickup https://example.connpass.com/event/000000/
 
 ### Sample
 [here](https://github.com/otoneko1102/connpass-pickup/tree/main/results/eventId_currentTime.html)
+
+## 免責事項
+本ツール（以下、ツール）は実験目的で作成・公開されました。  
+ツールの使用を推奨しません。  
+ツールを使用して発生した損害に関しては一切責任を負いません。

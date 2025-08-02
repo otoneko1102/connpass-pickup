@@ -57,6 +57,17 @@ async function main() {
 
     console.log(logo, "\n");
 
+    console.log("\n--- 免責事項 ---");
+    console.log(
+      chalk.yellow("本ツール（以下、ツール）は実験目的で作成・公開されました。")
+    );
+    console.log(chalk.yellow("ツールの使用を推奨しません。"));
+    console.log(
+      chalk.yellow(
+        "ツールを使用して発生した損害に関しては一切責任を負いません。\n"
+      )
+    );
+
     await checkVersion();
 
     let eventId;
