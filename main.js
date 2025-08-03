@@ -4,8 +4,8 @@ import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 import { render } from "oh-my-logo";
+import { isPackageLatest } from "is-package-latest";
 import axios from "axios";
-import * as semver from "semver";
 import chalk from "chalk";
 import * as cheerio from "cheerio";
 import inquirer from "inquirer";
@@ -24,10 +24,13 @@ async function checkVersion() {
 
     console.log(`${packageName}@${currentVersion}\n`);
 
-    const res = await axios.get(`https://registry.npmjs.org/${packageName}`);
-    const latestVersion = res.data["dist-tags"].latest;
+    // const res = await axios.get(`https://registry.npmjs.org/${packageName}`);
+    // const latestVersion = res.data["dist-tags"].latest;
 
-    if (semver.gt(latestVersion, currentVersion)) {
+    const res = await isPackageLatest(pkg);
+    const latestVersion = res.latestVersion;
+
+    if (!res.isLatest) {
       console.log(
         chalk.yellow(
           `[Notice] 新しいバージョンが利用可能です！: ${chalk.gray(
