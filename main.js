@@ -189,18 +189,16 @@ async function main() {
           choices: availableRoles,
         },
         {
-          type: "list",
+          type: "confirm",
           name: "allowDuplicates",
           message: "抽選リストの重複を削除しますか？(同じ人が複数枠にいる場合)",
-          choices: ["はい", "いいえ"],
-          default: "はい",
+          default: true,
         },
         {
-          type: "list",
+          type: "confirm",
           name: "saveHtml",
           message: "結果をHTMLファイルで保存・表示しますか？",
-          choices: ["はい", "いいえ"],
-          default: "はい",
+          default: true,
         },
         {
           type: "input",
@@ -212,7 +210,7 @@ async function main() {
 
       const rolesToProcess = followUpAnswers.selectedRoles;
 
-      if (followUpAnswers.allowDuplicates === "はい") {
+      if (followUpAnswers.allowDuplicates) {
         const memberSet = new Set();
         for (const role of rolesToProcess) {
           if (participants[role]) {
@@ -258,7 +256,7 @@ async function main() {
       markdown += `\n${index + 1}. ${member}`;
     });
 
-    if (followUpAnswers && followUpAnswers.saveHtml === "はい") {
+    if (followUpAnswers && followUpAnswers.saveHtml) {
       const md = new MarkdownIt();
       const htmlFragment = md.render(markdown);
       const __dirname = path.dirname(fileURLToPath(import.meta.url));
