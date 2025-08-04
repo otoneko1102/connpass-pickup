@@ -12,21 +12,18 @@ import inquirer from "inquirer";
 import MarkdownIt from "markdown-it";
 import prettier from "prettier";
 import open from "open";
+import { exec } from "child_process";
+import util from "util";
 
 import pkg from "./package.json" with { type: "json" };
+
+const currentVersion = pkg.version;
+const packageName = pkg.name;
 
 const TARGET_URL = "https://connpass.com/event/[id]/participation/";
 
 async function checkVersion() {
   try {
-    const currentVersion = pkg.version;
-    const packageName = pkg.name;
-
-    console.log(`${packageName}@${currentVersion}\n`);
-
-    // const res = await axios.get(`https://registry.npmjs.org/${packageName}`);
-    // const latestVersion = res.data["dist-tags"].latest;
-
     const res = await isPackageLatest(pkg);
     const latestVersion = res.latestVersion;
 
@@ -40,11 +37,43 @@ async function checkVersion() {
       );
       console.log(
         chalk.yellow(
-          `アップデート: ${chalk.cyan(
+          `更新コマンド: ${chalk.cyan(
             `npm install -g ${packageName}@latest`
           )}\n`
         )
       );
+
+      const { shouldUpdate } = await inquirer.prompt([
+        {
+          type: "confirm",
+          name: "shouldUpdate",
+          message: "パッケージを更新しますか？",
+          default: true,
+        },
+      ]);
+
+      if (shouldUpdate) {
+        console.log(chalk.cyan(`\nパッケージを更新しています...`));
+
+        const execPromise = util.promisify(exec);
+        const command = `npm install -g ${packageName}@latest`;
+
+        try {
+          await execPromise(command);
+          console.log(chalk.green("完了しました！"));
+          console.log(
+            chalk.yellow(
+              "再度コマンドを実行して、新しいバージョンをご利用ください"
+            )
+          );
+        } catch (error) {
+          console.error(chalk.red("失敗しました"));
+          console.error(error);
+          console.log(chalk.yellow("以下のコマンドを実行してください:"));
+          console.log(chalk.cyan(`npm install -g ${packageName}@latest`));
+        }
+        process.exit(0);
+      }
     }
   } catch (e) {
     console.error("バージョンチェックに失敗しました:", e.message);
@@ -53,6 +82,8 @@ async function checkVersion() {
 
 async function main() {
   try {
+    console.log(`${packageName}@${currentVersion}\n`);
+
     const logo = await render("CONNPASS\nPICKUP", {
       palette: "sunset",
       direction: "horizontal",
