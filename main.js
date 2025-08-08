@@ -241,7 +241,7 @@ async function main() {
 
     if (members.length === 0) {
       console.log("\n参加者がいないので処理を終了します");
-      return;
+      return process.exit(0);
     }
 
     let markdown = `# 順番 \n[Event URL](https://connpass.com/event/${eventId})`;
@@ -291,7 +291,10 @@ async function main() {
       console.error("\nエラー:", e.message);
       console.log("処理がキャンセルされました");
     }
+    return process.exit(1);
   }
+
+  process.exit(0);
 }
 
 main();
