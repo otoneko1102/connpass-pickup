@@ -16,7 +16,7 @@
     "url": "git+https://github.com/otoneko1102/connpass-pickup.git"
   },
   "dependencies": {
-    "axios": "^1.10.0",
+    "axios": "^1.13.6",
     "chalk": "^5.4.1",
     "cheerio": "^1.1.0",
     "inquirer": "^12.7.0",
