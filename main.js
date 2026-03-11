@@ -131,7 +131,11 @@ async function main() {
     console.log(`\neventId: ${eventId}`);
     console.log(`取得中: ${target}`);
 
-    const response = await axios.get(target);
+    const response = await axios.get(target, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36",
+      },
+    });
     const data = response.data;
     const $ = cheerio.load(data);
     const participants = {};
