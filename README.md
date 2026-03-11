@@ -6,6 +6,9 @@ LTなどの発表会の発表順を決める際にどうぞ。
 > [!Warning]  
 > `npm install -g connpass-pickup@latest` で新しいバージョンをインストールすると、パッケージが上書きされて更新されるので `results/` 内のhtmlがすべて削除されます。
 
+> [!Note]  
+> メンバーが多い場合は1つの枠につき100人までしか表示されません。
+
 ## Start
 ### Required
 ```bash
