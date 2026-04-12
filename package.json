@@ -32,7 +32,7 @@
   },
   "homepage": "https://github.com/otoneko1102/connpass-pickup#readme",
   "dependencies": {
-    "axios": "^1.13.6",
+    "axios": "^1.15.0",
     "chalk": "^5.6.2",
     "cheerio": "^1.2.0",
     "inquirer": "^12.7.0",
